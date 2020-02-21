@@ -11,7 +11,12 @@ private int[][] adjacentOffsets = { //x, y offsets used to find adjacent cells
 
 private int numRows = 5;
 private int numCols = 5;
-private int numMines = 10;
+private int numMines = 1;
+
+public final static int BUTTON_TEXT_SIZE = 12;
+public final static int WIN_FUN_DELAY = 2;
+
+private int currFunMine = 0;
 
 void setup ()
 {
@@ -52,11 +57,16 @@ public void setMines()
 public void draw ()
 {
     background( 0 );
-    if(isWon() == true)
-        displayWinningMessage();
-    else if (isLost()) {
-        displayLosingMessage();
+
+    if (isWon()) {
+        if (frameCount % WIN_FUN_DELAY == 0) {
+            buttons[currFunMine / numCols][currFunMine % numCols].useCustomColor(false);
+            currFunMine++;
+            currFunMine = currFunMine % ((numRows * numCols)-1);
+            buttons[currFunMine / numCols][currFunMine % numCols].useCustomColor(true);
+        }
     }
+
 }
 
 public boolean isWon()
@@ -68,6 +78,21 @@ public boolean isWon()
     }
     return true;
 }
+
+public void onWin() {
+    displayWinningMessage();
+    for (MSButton[] row : buttons) {
+        for (MSButton button : row) {
+            if (!mines.contains(button)) {
+                button.setCustomColor(color(255, 255, 0));
+            }
+            else {
+                button.setCustomColor(color(255, 0, 0));
+            }
+        }
+    }
+}
+
 public boolean isLost() {
     for (MSButton mine: mines) {
         if (mine.isClicked()) {
@@ -76,15 +101,21 @@ public boolean isLost() {
     }
     return false;
 }
+public void onLose() {
+    displayLosingMessage();
+    for (MSButton mine : mines) {
+        mine.setClicked(true);
+    }
+}
+
 public void displayLosingMessage()
 {
     //your code here
-    System.out.println("LOSING");
-    text("You Lose", width/2, height/2);
+    new MSText("You Lose", width/2, height/2).setTextSize(50);
 }
 public void displayWinningMessage()
 {
-    text("You Win", width/2, height/2);
+    new MSText("You Win", width/2, height/2).setTextSize(50);
 }
 public boolean isValid(int r, int c)
 {
@@ -111,7 +142,8 @@ public class MSButton
 {
     private int myRow, myCol;
     private float x,y, width, height;
-    private boolean clicked, flagged;
+    private color customClr;
+    private boolean clicked, flagged, useCustomClr;
     private String myLabel;
     
     public MSButton ( int row, int col )
@@ -124,6 +156,8 @@ public class MSButton
         y = myRow*height;
         myLabel = "";
         flagged = clicked = false;
+        customClr = -1;
+        useCustomClr = false;
         Interactive.add( this ); // register it with the manager
     }
 
@@ -138,14 +172,15 @@ public class MSButton
             if (!this.flagged) {
                 this.clicked = false;
             }
+            if (isWon()) {
+                    onWin();
+            }
         }
         //left click
         else {
             clicked = true;
             if (mines.contains(this)) {
-                System.out.println("LOST");
-                System.out.println(this.isClicked());
-                displayLosingMessage();
+                onLose();
             }
             else {
                 this.setLabel(countMines(this.myRow, this.myCol));
@@ -165,9 +200,14 @@ public class MSButton
 
     public void draw () 
     {    
-        if (flagged)
+        if (useCustomClr) {
+            fill(this.customClr);
+        }
+        else if (flagged) {
             fill(0);
-         else if( clicked && mines.contains(this) ) 
+            //image(s)
+        }
+        else if( clicked && mines.contains(this) ) 
              fill(255,0,0);
         else if(clicked)
             fill( 200 );
@@ -176,6 +216,7 @@ public class MSButton
 
         rect(x, y, width, height);
         fill(0);
+        textSize(BUTTON_TEXT_SIZE);
         text(myLabel,x+width/2,y+height/2);
     }
     public void setLabel(String newLabel)
@@ -190,5 +231,43 @@ public class MSButton
     {
         return flagged;
     }
-    public boolean isClicked() {return clicked;}
+    public void setClicked(boolean clicked) { this.clicked = clicked; }
+    public boolean isClicked() { return clicked; }
+    public void setCustomColor(color clr)  {
+        this.customClr = clr;
+    }
+    public void useCustomColor(boolean use) {
+        this.useCustomClr = use;
+    }
+}
+
+public class MSText
+{
+    private String txt;
+    private int x, y, txtSiz;
+    private color fillClr, strokeClr;
+    public MSText() {}
+    public MSText(String txt, int x, int y, int fillClr, int strokeClr) {
+        this.txt = txt;
+        this.x = x;
+        this.y = y;
+        this.fillClr = fillClr;
+        this.strokeClr = strokeClr;
+        this.txtSiz = 12;
+        Interactive.add( this ); // register it with the manager
+    }
+    public MSText(String txt, int x, int y) {
+        this(txt, x, y, color(0, 0, 0), -1);
+    }
+    public void draw() {
+        fill(this.fillClr);
+        if (this.strokeClr >= 0) {
+            stroke(this.strokeClr);
+        }
+        textSize(this.txtSiz);
+        text(this.txt, this.x, this.y);
+    }
+    public void setTextSize(int siz) {
+        this.txtSiz = siz;
+    }
 }

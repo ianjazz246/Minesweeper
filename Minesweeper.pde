@@ -9,19 +9,33 @@ private int[][] adjacentOffsets = { //x, y offsets used to find adjacent cells
     {1, 0},
 };
 
+private int[][] difficultySettings = {
+    {6, 5},
+    {10, 20},
+    {15, 40}
+};
+
 private int numRows = 5;
 private int numCols = 5;
-private int numMines = 1;
+private int numMines = 4;
+
+private int difficulty = 0;
 
 public final static int BUTTON_TEXT_SIZE = 12;
-public final static int WIN_FUN_DELAY = 2;
+public final static int WIN_FUN_DELAY = 3;
 
 private int currFunMine = 0;
+
+private PImage flagImage;
 
 void setup ()
 {
     size(400, 400);
     textAlign(CENTER,CENTER);
+
+    numRows = difficultySettings[difficulty][0];
+    numCols = difficultySettings[difficulty][0];
+    numMines = difficultySettings[difficulty][1];
     
     // make the manager
     Interactive.make( this );
@@ -37,6 +51,8 @@ void setup ()
             buttons[row][col] = new MSButton(row, col);
         }
     }
+
+    flagImage = loadImage("Minesweeper_flag.png");
     
     setMines();
 }
@@ -173,7 +189,7 @@ public class MSButton
                 this.clicked = false;
             }
             if (isWon()) {
-                    onWin();
+                onWin();
             }
         }
         //left click
@@ -183,11 +199,14 @@ public class MSButton
                 onLose();
             }
             else {
+                this.flagged = false;
+
                 this.setLabel(countMines(this.myRow, this.myCol));
 
                 for (int[] offset : adjacentOffsets) {
                     if (isValid(this.myRow+offset[0], this.myCol+offset[1]) &&
                         !buttons[this.myRow+offset[0]][this.myCol+offset[1]].isClicked() && //don't click on already clicked values to prevent infinite recursion
+                        //countMines(this.myRow+offset[0], this.myCol+offset[1]) == 0 && //mine has no numbers
                         !mines.contains(buttons[this.myRow+offset[0]][this.myCol+offset[1]])
                     ) {
                         buttons[this.myRow+offset[0]][this.myCol+offset[1]].mousePressed();
@@ -203,11 +222,7 @@ public class MSButton
         if (useCustomClr) {
             fill(this.customClr);
         }
-        else if (flagged) {
-            fill(0);
-            //image(s)
-        }
-        else if( clicked && mines.contains(this) ) 
+        else if(clicked && mines.contains(this)) 
              fill(255,0,0);
         else if(clicked)
             fill( 200 );
@@ -218,6 +233,10 @@ public class MSButton
         fill(0);
         textSize(BUTTON_TEXT_SIZE);
         text(myLabel,x+width/2,y+height/2);
+
+        if (flagged) {
+            image(flagImage, this.x+this.width/4, this.y+this.height/4, this.width/1.5, this.height/1.5);
+        }
     }
     public void setLabel(String newLabel)
     {
@@ -269,5 +288,22 @@ public class MSText
     }
     public void setTextSize(int siz) {
         this.txtSiz = siz;
+    }
+}
+
+public void keyPressed() {
+    switch(key) {
+        case '0':
+            difficulty = 0;
+            setup();
+            break;
+        case '1':
+            difficulty = 1;
+            setup();
+            break;
+        case '2':
+            difficulty = 2;
+            setup();
+            break;
     }
 }

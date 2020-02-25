@@ -9,10 +9,11 @@ private int[][] adjacentOffsets = { //x, y offsets used to find adjacent cells
     {1, 0},
 };
 
+//num Rows/Cols, num Mines
 private int[][] difficultySettings = {
-    {6, 5},
-    {10, 20},
-    {15, 40}
+    {6, 10},
+    {10, 25},
+    {15, 60}
 };
 
 private int numRows = 5;
@@ -20,6 +21,8 @@ private int numCols = 5;
 private int numMines = 4;
 
 private int difficulty = 0;
+
+Interactive manager;
 
 public final static int BUTTON_TEXT_SIZE = 12;
 public final static int WIN_FUN_DELAY = 3;
@@ -32,13 +35,14 @@ void setup ()
 {
     size(400, 400);
     textAlign(CENTER,CENTER);
+    background(0);
 
     numRows = difficultySettings[difficulty][0];
     numCols = difficultySettings[difficulty][0];
     numMines = difficultySettings[difficulty][1];
     
     // make the manager
-    Interactive.make( this );
+    manager = Interactive.make( this );
     
     //your code to initialize buttons goes here
 
@@ -60,6 +64,7 @@ public void setMines()
 {
     //your code
     int i = 0;
+    System.out.println(numMines);
     while (i < numMines) {
         int row = (int)(Math.random() * numRows);
         int col = (int)(Math.random() * numCols);
@@ -291,18 +296,29 @@ public class MSText
     }
 }
 
+private void removeButtons() {
+    for (MSButton[] row : buttons) {
+        for (MSButton button : row) {
+            Interactive.setActive(button, false);
+        }
+    }
+}
+
 public void keyPressed() {
     switch(key) {
-        case '0':
-            difficulty = 0;
-            setup();
-            break;
         case '1':
-            difficulty = 1;
+            difficulty = 0;
+            removeButtons();
             setup();
             break;
         case '2':
+            difficulty = 1;
+            removeButtons();
+            setup();
+            break;
+        case '3':
             difficulty = 2;
+            removeButtons();
             setup();
             break;
     }

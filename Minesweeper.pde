@@ -12,8 +12,8 @@ private int[][] adjacentOffsets = { //x, y offsets used to find adjacent cells
 //num Rows/Cols, num Mines
 private int[][] difficultySettings = {
     {6, 10},
-    {10, 25},
-    {15, 60}
+    {10, 45},
+    {15, 90}
 };
 
 private int numRows = 5;

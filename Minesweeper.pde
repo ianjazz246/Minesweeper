@@ -131,11 +131,11 @@ public void onLose() {
 public void displayLosingMessage()
 {
     //your code here
-    // new MSText("You Lose", width/2, height/2).setTextSize(50);
+    new MSText("You Lose", width/2, height/2).setTextSize(50);
 }
 public void displayWinningMessage()
 {
-    // new MSText("You Win", width/2, height/2).setTextSize(50);
+    new MSText("You Win", width/2, height/2).setTextSize(50);
 }
 public boolean isValid(int r, int c)
 {
@@ -264,16 +264,19 @@ public class MSButton
     }
 }
 
-/*public class MSText
+public class MSText
 {
     private String txt;
-    private int x, y, txtSiz;
+    //width, height variable needed for guido
+    private int x, y, width, height, txtSiz;
     private color fillClr, strokeClr;
     public MSText() {}
     public MSText(String txt, int x, int y, int fillClr, int strokeClr) {
         this.txt = txt;
         this.x = x;
         this.y = y;
+        width = 1;
+        height = 1;
         this.fillClr = fillClr;
         this.strokeClr = strokeClr;
         this.txtSiz = 12;
@@ -295,7 +298,7 @@ public class MSButton
     }
 
     public void mousePressed() {}
-}*/
+}
 
 private void removeButtons() {
     for (MSButton[] row : buttons) {

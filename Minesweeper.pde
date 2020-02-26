@@ -64,7 +64,6 @@ public void setMines()
 {
     //your code
     int i = 0;
-    System.out.println(numMines);
     while (i < numMines) {
         int row = (int)(Math.random() * numRows);
         int col = (int)(Math.random() * numCols);

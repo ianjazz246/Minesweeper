@@ -22,8 +22,6 @@ private int numMines = 4;
 
 private int difficulty = 0;
 
-Interactive manager;
-
 public final static int BUTTON_TEXT_SIZE = 12;
 public final static int WIN_FUN_DELAY = 3;
 
@@ -42,7 +40,7 @@ void setup ()
     numMines = difficultySettings[difficulty][1];
     
     // make the manager
-    manager = Interactive.make( this );
+    Interactive.make( this );
     
     //your code to initialize buttons goes here
 

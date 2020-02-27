@@ -82,7 +82,6 @@ public void draw ()
             buttons[x][currFunMine % numCols].useCustomColor(false);
             currFunMine++;
             currFunMine = currFunMine % ((numRows * numCols)-1);
-            x = (int)(currFunMine / numCols); //Done to try to fix it in javascript. The divide is a float in javascript, which breaks when accessing an array
             buttons[x][currFunMine % numCols].useCustomColor(true);
         }
     }
@@ -91,25 +90,11 @@ public void draw ()
 
 public boolean isWon()
 {
-    for (MSButton[] row : buttons) {
-        for (MSButton button : row) {
-            if (button.isFlagged()) {
-                if (!mines.contains(button)) { //incorrectly flagged button
-                    return false;
-                }
-            }
-            else {
-                if (mines.contains(button)) { //unmarked mine
-                    return false;
-                }
-            }
+    for (MSButton mine: mines) {
+        if (!mine.isFlagged()) {
+            return false;
         }
     }
-    // for (MSButton mine: mines) {
-    //     if (!mine.isFlagged()) {
-    //         return false;
-    //     }
-    // }
     return true;
 }
 
@@ -119,8 +104,6 @@ public void onWin() {
         for (MSButton button : row) {
             if (!mines.contains(button)) {
                 button.setCustomColor(color(255, 255, 0));
-                mouseButton = LEFT;
-                button.mousePressed();
             }
             else {
                 button.setCustomColor(color(255, 0, 0));
